@@ -1,0 +1,207 @@
+name: SFDR Navigator Agent - Validation Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 6 AM UTC for regulatory compliance monitoring
+    - cron: '0 6 * * *'
+
+env:
+  NODE_VERSION: '18'
+  COVERAGE_THRESHOLD: 90
+
+jobs:
+  schema-validation:
+    name: JSON Schema Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate SFDR schemas
+        run: |
+          echo "Validating SFDR classification request schema..."
+          npm run schema:validate
+
+      - name: Test fixtures against schema
+        run: |
+          echo "Testing Article 6 fixture..."
+          npx ajv validate -s schemas/sfdr-classification-request.schema.json -d test/fixtures/article6-basic.json
+          echo "Testing Article 8 fixture..."
+          npx ajv validate -s schemas/sfdr-classification-request.schema.json -d test/fixtures/article8-esg.json
+          echo "Testing Article 9 fixture..."
+          npx ajv validate -s schemas/sfdr-classification-request.schema.json -d test/fixtures/article9-sustainable.json
+
+  regulatory-compliance:
+    name: Regulatory Compliance Tests
+    runs-on: ubuntu-latest
+    needs: schema-validation
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate TypeScript interfaces
+        run: npm run json2ts
+
+      - name: Run regulatory compliance tests
+        run: |
+          npm run test:regulatory
+          echo "Regulatory compliance validation completed"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: regulatory-test-results
+          path: test/reports/
+
+  code-quality:
+    name: Code Quality & Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Type checking
+        run: npm run type-check
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Check coverage threshold
+        run: |
+          COVERAGE=$(npm run test:coverage:report | grep -o '[0-9]\+%' | head -1 | sed 's/%//')
+          if [ "$COVERAGE" -lt "$COVERAGE_THRESHOLD" ]; then
+            echo "Coverage $COVERAGE% is below threshold $COVERAGE_THRESHOLD%"
+            exit 1
+          fi
+          echo "Coverage $COVERAGE% meets threshold $COVERAGE_THRESHOLD%"
+
+  integration-tests:
+    name: End-to-End Integration Tests
+    runs-on: ubuntu-latest
+    needs: [schema-validation, regulatory-compliance]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run integration tests
+        run: |
+          echo "Running SFDR Navigator Agent integration tests..."
+          npm run test:integration
+
+      - name: Validate Phase 1C milestones
+        run: |
+          echo "Validating Phase 1C completion criteria..."
+          npm run test:milestones
+
+  security-scan:
+    name: Security & Dependency Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
+
+      - name: Check for known vulnerabilities
+        run: |
+          echo "Scanning for security vulnerabilities..."
+          npx audit-ci --moderate
+
+  deployment-readiness:
+    name: Deployment Readiness Check
+    runs-on: ubuntu-latest
+    needs: [schema-validation, regulatory-compliance, code-quality, integration-tests, security-scan]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate deployment criteria
+        run: |
+          echo "✅ Schema validation passed"
+          echo "✅ Regulatory compliance tests passed"
+          echo "✅ Code quality checks passed"
+          echo "✅ Integration tests passed"
+          echo "✅ Security scan completed"
+          echo "🚀 SFDR Navigator Agent Phase 1 ready for deployment"
+
+      - name: Generate deployment report
+        run: |
+          echo "# SFDR Navigator Agent - Phase 1 Deployment Report" > deployment-report.md
+          echo "" >> deployment-report.md
+          echo "## Validation Summary" >> deployment-report.md
+          echo "- ✅ JSON Schema validation: PASSED" >> deployment-report.md
+          echo "- ✅ Regulatory compliance: PASSED" >> deployment-report.md
+          echo "- ✅ Code quality & coverage: PASSED" >> deployment-report.md
+          echo "- ✅ Integration tests: PASSED" >> deployment-report.md
+          echo "- ✅ Security scan: PASSED" >> deployment-report.md
+          echo "" >> deployment-report.md
+          echo "## Phase 1 Milestones" >> deployment-report.md
+          echo "- [x] Phase 1A: Regulatory Domain Modeling" >> deployment-report.md
+          echo "- [x] Phase 1B: Regulatory Validation Logic" >> deployment-report.md
+          echo "- [x] Phase 1C: Comprehensive Test Suite" >> deployment-report.md
+          echo "" >> deployment-report.md
+          echo "Generated on: $(date)" >> deployment-report.md
+
+      - name: Upload deployment report
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-report
+          path: deployment-report.md

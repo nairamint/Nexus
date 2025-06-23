@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "entityId": "123e4567-e89b-12d3-a456-426614174000",
+    "reportingPeriod": "2024-12-31",
+    "regulatoryVersion": "SFDR_v1.0",
+    "submissionType": "INITIAL",
+    "submissionDate": "2024-01-15T10:00:00Z",
+    "preparerId": "compliance-officer-001"
+  },
+  "fundProfile": {
+    "fundType": "UCITS",
+    "fundName": "European Equity Fund",
+    "isin": "LU1234567890",
+    "investmentStrategy": "Diversified European equity investment strategy focusing on large-cap companies with strong fundamentals and growth potential",
+    "targetArticleClassification": "Article6",
+    "investmentUniverse": "European listed equities across all sectors",
+    "geographicalFocus": ["Europe"],
+    "sectorFocus": ["Technology", "Healthcare", "Financials"],
+    "minimumInvestmentHorizon": 36
+  },
+  "esgIntegration": {
+    "considersPAI": false,
+    "paiIndicators": [],
+    "dueDiligencePolicies": {
+      "esgIntegration": false,
+      "sustainabilityRisks": true,
+      "adverseImpacts": false
+    },
+    "engagementPolicies": {
+      "shareholderEngagement": false,
+      "votingPolicy": false,
+      "escalationProcedures": false
+    }
+  },
+  "sustainabilityRiskIntegration": {
+    "identificationProcess": "Basic sustainability risk screening using third-party ESG ratings to identify material sustainability risks",
+    "assessmentMethodology": "Quantitative ESG score integration in risk assessment models alongside traditional financial risk metrics",
+    "integrationInDecisionMaking": "ESG risks considered alongside traditional financial risks in investment committee decisions"
+  }
+}

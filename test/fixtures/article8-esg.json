@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "entityId": "123e4567-e89b-12d3-a456-426614174001",
+    "reportingPeriod": "2024-12-31",
+    "regulatoryVersion": "SFDR_v1.0",
+    "submissionType": "INITIAL",
+    "submissionDate": "2024-01-15T10:00:00Z",
+    "preparerId": "compliance-officer-002"
+  },
+  "fundProfile": {
+    "fundType": "UCITS",
+    "fundName": "ESG European Equity Fund",
+    "isin": "LU1234567891",
+    "lei": "5493000IBP32UQZ0KL24",
+    "investmentStrategy": "ESG-integrated European equity strategy promoting environmental and social characteristics through systematic ESG integration and active engagement",
+    "targetArticleClassification": "Article8",
+    "investmentUniverse": "European listed companies with strong ESG profiles and commitment to sustainability practices",
+    "geographicalFocus": ["Europe"],
+    "sectorFocus": ["Clean Technology", "Healthcare", "Sustainable Infrastructure"],
+    "minimumInvestmentHorizon": 48
+  },
+  "esgIntegration": {
+    "considersPAI": true,
+    "paiIndicators": [
+      "GHG_EMISSIONS",
+      "CARBON_FOOTPRINT",
+      "GHG_INTENSITY",
+      "FOSSIL_FUEL_EXPOSURE",
+      "BOARD_GENDER_DIVERSITY",
+      "UNGA_GLOBAL_COMPACT"
+    ],
+    "paiStatement": "The fund considers principal adverse impacts through systematic ESG integration, active engagement with portfolio companies, and exclusion of companies with significant adverse impacts on sustainability factors",
+    "dueDiligencePolicies": {
+      "esgIntegration": true,
+      "sustainabilityRisks": true,
+      "adverseImpacts": true
+    },
+    "engagementPolicies": {
+      "shareholderEngagement": true,
+      "votingPolicy": true,
+      "escalationProcedures": true
+    }
+  },
+  "taxonomyAlignment": {
+    "environmentalObjectives": [
+      "CLIMATE_CHANGE_MITIGATION",
+      "POLLUTION_PREVENTION"
+    ],
+    "minimumAlignmentPercentage": 25,
+    "alignmentCalculationMethod": "Revenue-based taxonomy alignment assessment using third-party data providers with quarterly monitoring and annual verification",
+    "doNoSignificantHarmAssessment": true,
+    "minimumSafeguardsCompliance": true,
+    "alignmentBreakdown": [
+      {
+        "objective": "CLIMATE_CHANGE_MITIGATION",
+        "alignmentPercentage": 20,
+        "contributionDescription": "Investments in renewable energy, energy efficiency, and clean transportation solutions"
+      },
+      {
+        "objective": "POLLUTION_PREVENTION",
+        "alignmentPercentage": 5,
+        "contributionDescription": "Waste management and circular economy solutions reducing environmental pollution"
+      }
+    ]
+  },
+  "marketingMaterials": {
+    "promotesESGCharacteristics": true,
+    "sustainabilityClaimsPresent": true,
+    "specificSustainabilityTerms": [
+      "ESG integration",
+      "sustainable investing",
+      "environmental characteristics",
+      "social responsibility"
+    ]
+  },
+  "sustainabilityRiskIntegration": {
+    "identificationProcess": "Comprehensive ESG risk identification using multiple data sources, proprietary analysis, and regular portfolio company assessments covering climate, social, and governance factors",
+    "assessmentMethodology": "Quantitative ESG scoring integrated with fundamental analysis, scenario planning, and stress testing to assess materiality of sustainability risks",
+    "integrationInDecisionMaking": "ESG factors systematically integrated in investment decision-making process with ESG scores influencing position sizing and portfolio construction"
+  }
+}

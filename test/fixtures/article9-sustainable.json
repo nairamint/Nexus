@@ -1,0 +1,116 @@
+{
+  "metadata": {
+    "entityId": "123e4567-e89b-12d3-a456-426614174002",
+    "reportingPeriod": "2024-12-31",
+    "regulatoryVersion": "SFDR_v1.0",
+    "submissionType": "INITIAL",
+    "submissionDate": "2024-01-15T10:00:00Z",
+    "preparerId": "compliance-officer-003"
+  },
+  "fundProfile": {
+    "fundType": "UCITS",
+    "fundName": "Climate Solutions Impact Fund",
+    "isin": "LU1234567892",
+    "lei": "5493000IBP32UQZ0KL25",
+    "investmentStrategy": "Dedicated sustainable investment strategy targeting companies providing solutions to climate change and environmental challenges with measurable positive environmental impact",
+    "targetArticleClassification": "Article9",
+    "investmentUniverse": "Global companies with primary business activities contributing to environmental solutions and climate change mitigation",
+    "geographicalFocus": ["Global"],
+    "sectorFocus": ["Renewable Energy", "Clean Technology", "Sustainable Transportation", "Circular Economy"],
+    "minimumInvestmentHorizon": 60
+  },
+  "esgIntegration": {
+    "considersPAI": true,
+    "paiIndicators": [
+      "GHG_EMISSIONS",
+      "CARBON_FOOTPRINT",
+      "GHG_INTENSITY",
+      "FOSSIL_FUEL_EXPOSURE",
+      "ENERGY_CONSUMPTION_INTENSITY",
+      "BIODIVERSITY_IMPACT",
+      "WATER_EMISSIONS",
+      "HAZARDOUS_WASTE",
+      "BOARD_GENDER_DIVERSITY",
+      "UNGA_GLOBAL_COMPACT",
+      "CONTROVERSIAL_WEAPONS"
+    ],
+    "paiStatement": "The fund systematically considers and monitors all mandatory principal adverse impacts through comprehensive ESG due diligence, active engagement, strict exclusion policies, and quarterly impact measurement and reporting",
+    "dueDiligencePolicies": {
+      "esgIntegration": true,
+      "sustainabilityRisks": true,
+      "adverseImpacts": true
+    },
+    "engagementPolicies": {
+      "shareholderEngagement": true,
+      "votingPolicy": true,
+      "escalationProcedures": true
+    }
+  },
+  "sustainableInvestment": {
+    "hasSustainableObjective": true,
+    "sustainableObjectiveType": "ENVIRONMENTAL",
+    "objectiveDescription": "To generate positive environmental impact by investing in companies providing solutions to climate change, resource scarcity, and environmental degradation while achieving long-term capital appreciation",
+    "minimumSustainablePercentage": 80,
+    "impactMeasurementFramework": "Proprietary impact measurement framework tracking environmental KPIs including CO2 emissions avoided, renewable energy capacity added, and waste diverted from landfills",
+    "sustainabilityIndicators": [
+      {
+        "indicator": "CO2 Emissions Avoided (tonnes)",
+        "measurementMethod": "Portfolio company reporting and third-party verification",
+        "targetValue": 1000000,
+        "reportingFrequency": "QUARTERLY"
+      },
+      {
+        "indicator": "Renewable Energy Capacity Added (MW)",
+        "measurementMethod": "Direct company reporting and industry databases",
+        "targetValue": 500,
+        "reportingFrequency": "QUARTERLY"
+      }
+    ]
+  },
+  "taxonomyAlignment": {
+    "environmentalObjectives": [
+      "CLIMATE_CHANGE_MITIGATION",
+      "CLIMATE_CHANGE_ADAPTATION",
+      "POLLUTION_PREVENTION",
+      "CIRCULAR_ECONOMY"
+    ],
+    "minimumAlignmentPercentage": 60,
+    "alignmentCalculationMethod": "Comprehensive taxonomy alignment assessment using revenue, capex, and opex analysis with independent third-party verification and quarterly monitoring",
+    "doNoSignificantHarmAssessment": true,
+    "minimumSafeguardsCompliance": true,
+    "alignmentBreakdown": [
+      {
+        "objective": "CLIMATE_CHANGE_MITIGATION",
+        "alignmentPercentage": 40,
+        "contributionDescription": "Renewable energy generation, energy storage solutions, and electric vehicle infrastructure"
+      },
+      {
+        "objective": "POLLUTION_PREVENTION",
+        "alignmentPercentage": 15,
+        "contributionDescription": "Water treatment technologies, air pollution control systems, and sustainable waste management"
+      },
+      {
+        "objective": "CIRCULAR_ECONOMY",
+        "alignmentPercentage": 5,
+        "contributionDescription": "Recycling technologies, sustainable packaging solutions, and resource efficiency systems"
+      }
+    ]
+  },
+  "marketingMaterials": {
+    "promotesESGCharacteristics": true,
+    "sustainabilityClaimsPresent": true,
+    "specificSustainabilityTerms": [
+      "sustainable investment",
+      "climate solutions",
+      "environmental impact",
+      "carbon neutral",
+      "renewable energy",
+      "circular economy"
+    ]
+  },
+  "sustainabilityRiskIntegration": {
+    "identificationProcess": "Comprehensive sustainability risk identification covering physical climate risks, transition risks, social risks, and governance risks using scenario analysis, stress testing, and forward-looking assessments",
+    "assessmentMethodology": "Integrated ESG risk assessment combining quantitative modeling, qualitative analysis, and impact measurement with regular portfolio-level risk monitoring and company-specific risk assessments",
+    "integrationInDecisionMaking": "Sustainability risks are primary considerations in all investment decisions with mandatory ESG approval for all investments and continuous monitoring of sustainability risk exposure"
+  }
+}

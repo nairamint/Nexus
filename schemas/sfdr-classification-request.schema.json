@@ -1,0 +1,448 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://synapses.ai/schemas/sfdr/classification-request/v1.0.0",
+  "title": "SFDR Classification Request",
+  "description": "Schema for SFDR Navigator Agent classification requests based on SFDR Regulation (EU) 2019/2088",
+  "type": "object",
+  "required": ["metadata", "fundProfile", "esgIntegration", "sustainabilityRiskIntegration"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["entityId", "reportingPeriod", "regulatoryVersion", "submissionType", "submissionDate", "preparerId"],
+      "properties": {
+        "entityId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the fund/entity"
+        },
+        "reportingPeriod": {
+          "type": "string",
+          "format": "date",
+          "description": "Reporting period in ISO date format (YYYY-MM-DD)"
+        },
+        "regulatoryVersion": {
+          "type": "string",
+          "pattern": "^SFDR_v\\d+\\.\\d+$",
+          "description": "Regulatory framework version (e.g., SFDR_v1.0)"
+        },
+        "submissionType": {
+          "type": "string",
+          "enum": ["INITIAL", "AMENDMENT", "PERIODIC"],
+          "description": "Type of SFDR submission"
+        },
+        "submissionDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Submission timestamp in ISO datetime format"
+        },
+        "preparerId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "ID of the compliance officer preparing the submission"
+        },
+        "reviewerId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional ID of the reviewer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "fundProfile": {
+      "type": "object",
+      "required": ["fundType", "fundName", "investmentStrategy", "targetArticleClassification", "investmentUniverse"],
+      "properties": {
+        "fundType": {
+          "type": "string",
+          "enum": ["UCITS", "AIF", "ELTIF", "EuVECA", "EuSEF"],
+          "description": "EU fund type subject to SFDR"
+        },
+        "fundName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Official fund name"
+        },
+        "isin": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}[A-Z0-9]{9}[0-9]$",
+          "description": "International Securities Identification Number"
+        },
+        "lei": {
+          "type": "string",
+          "pattern": "^[A-Z0-9]{18}[0-9]{2}$",
+          "description": "Legal Entity Identifier"
+        },
+        "investmentStrategy": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 1000,
+          "description": "Detailed investment strategy description"
+        },
+        "targetArticleClassification": {
+          "type": "string",
+          "enum": ["Article6", "Article8", "Article9"],
+          "description": "Target SFDR article classification"
+        },
+        "sustainabilityObjective": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500,
+          "description": "Required for Article 9 funds - specific sustainability objective"
+        },
+        "investmentUniverse": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 500,
+          "description": "Description of investment universe"
+        },
+        "geographicalFocus": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$|^(Global|Europe|North America|Asia Pacific|Emerging Markets)$"
+          },
+          "uniqueItems": true,
+          "description": "Geographical focus areas (ISO country codes or regions)"
+        },
+        "sectorFocus": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50
+          },
+          "uniqueItems": true,
+          "description": "Sector focus areas"
+        },
+        "minimumInvestmentHorizon": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 600,
+          "description": "Minimum investment horizon in months"
+        }
+      },
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "targetArticleClassification": {
+            "const": "Article9"
+          }
+        }
+      },
+      "then": {
+        "required": ["sustainabilityObjective"]
+      }
+    },
+    "esgIntegration": {
+      "type": "object",
+      "required": ["considersPAI", "paiIndicators", "dueDiligencePolicies", "engagementPolicies"],
+      "properties": {
+        "considersPAI": {
+          "type": "boolean",
+          "description": "Whether the fund considers Principal Adverse Impacts"
+        },
+        "paiIndicators": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "GHG_EMISSIONS",
+              "CARBON_FOOTPRINT",
+              "GHG_INTENSITY",
+              "FOSSIL_FUEL_EXPOSURE",
+              "NON_RENEWABLE_ENERGY",
+              "ENERGY_CONSUMPTION",
+              "WATER_EMISSIONS",
+              "HAZARDOUS_WASTE",
+              "WATER_USAGE",
+              "BIODIVERSITY_IMPACT",
+              "UNGA_GLOBAL_COMPACT",
+              "CONTROVERSIAL_WEAPONS",
+              "BOARD_GENDER_DIVERSITY",
+              "ANTI_CORRUPTION_POLICIES"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "PAI indicators considered by the fund"
+        },
+        "paiStatement": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 1000,
+          "description": "Statement on how PAI are considered"
+        },
+        "dueDiligencePolicies": {
+          "type": "object",
+          "required": ["esgIntegration", "sustainabilityRisks", "adverseImpacts"],
+          "properties": {
+            "esgIntegration": {
+              "type": "boolean",
+              "description": "ESG integration in due diligence"
+            },
+            "sustainabilityRisks": {
+              "type": "boolean",
+              "description": "Sustainability risk assessment"
+            },
+            "adverseImpacts": {
+              "type": "boolean",
+              "description": "Adverse impact consideration"
+            }
+          },
+          "additionalProperties": false
+        },
+        "engagementPolicies": {
+          "type": "object",
+          "required": ["shareholderEngagement", "votingPolicy", "escalationProcedures"],
+          "properties": {
+            "shareholderEngagement": {
+              "type": "boolean",
+              "description": "Active shareholder engagement"
+            },
+            "votingPolicy": {
+              "type": "boolean",
+              "description": "ESG-informed voting policy"
+            },
+            "escalationProcedures": {
+              "type": "boolean",
+              "description": "Escalation procedures for engagement"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "considersPAI": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": ["paiStatement"],
+        "properties": {
+          "paiIndicators": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    "taxonomyAlignment": {
+      "type": "object",
+      "required": ["environmentalObjectives", "minimumAlignmentPercentage", "alignmentCalculationMethod", "doNoSignificantHarmAssessment", "minimumSafeguardsCompliance"],
+      "properties": {
+        "environmentalObjectives": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "CLIMATE_CHANGE_MITIGATION",
+              "CLIMATE_CHANGE_ADAPTATION",
+              "WATER_MARINE_RESOURCES",
+              "CIRCULAR_ECONOMY",
+              "POLLUTION_PREVENTION",
+              "BIODIVERSITY_ECOSYSTEMS"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "EU Taxonomy environmental objectives"
+        },
+        "minimumAlignmentPercentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Minimum percentage of taxonomy-aligned investments"
+        },
+        "alignmentCalculationMethod": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500,
+          "description": "Method for calculating taxonomy alignment"
+        },
+        "doNoSignificantHarmAssessment": {
+          "type": "boolean",
+          "description": "Whether DNSH assessment is performed"
+        },
+        "minimumSafeguardsCompliance": {
+          "type": "boolean",
+          "description": "Compliance with minimum safeguards"
+        },
+        "alignmentBreakdown": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["objective", "alignmentPercentage", "contributionDescription"],
+            "properties": {
+              "objective": {
+                "type": "string",
+                "enum": [
+                  "CLIMATE_CHANGE_MITIGATION",
+                  "CLIMATE_CHANGE_ADAPTATION",
+                  "WATER_MARINE_RESOURCES",
+                  "CIRCULAR_ECONOMY",
+                  "POLLUTION_PREVENTION",
+                  "BIODIVERSITY_ECOSYSTEMS"
+                ]
+              },
+              "alignmentPercentage": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "contributionDescription": {
+                "type": "string",
+                "minLength": 10,
+                "maxLength": 300
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Detailed breakdown by environmental objective"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sustainableInvestment": {
+      "type": "object",
+      "required": ["sustainableInvestmentMinimum", "sustainabilityIndicators", "measurementMethodology", "dataSourcesAndProcessing", "limitationsAndCaveats"],
+      "properties": {
+        "sustainableInvestmentMinimum": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Minimum percentage of sustainable investments"
+        },
+        "sustainabilityIndicators": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Sustainability indicators used"
+        },
+        "measurementMethodology": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 1000,
+          "description": "Methodology for measuring sustainable investment"
+        },
+        "dataSourcesAndProcessing": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500,
+          "description": "Data sources and processing methods"
+        },
+        "limitationsAndCaveats": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 200
+          },
+          "minItems": 1,
+          "description": "Limitations and caveats of the approach"
+        }
+      },
+      "additionalProperties": false
+    },
+    "marketingMaterials": {
+      "type": "object",
+      "required": ["promotesESGCharacteristics", "sustainabilityClaimsPresent", "specificSustainabilityTerms"],
+      "properties": {
+        "promotesESGCharacteristics": {
+          "type": "boolean",
+          "description": "Whether marketing materials promote ESG characteristics"
+        },
+        "sustainabilityClaimsPresent": {
+          "type": "boolean",
+          "description": "Whether sustainability claims are present"
+        },
+        "specificSustainabilityTerms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 50
+          },
+          "uniqueItems": true,
+          "description": "Specific sustainability terms used"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sustainabilityRiskIntegration": {
+      "type": "object",
+      "required": ["identificationProcess", "assessmentMethodology", "integrationInDecisionMaking"],
+      "properties": {
+        "identificationProcess": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 500,
+          "description": "Process for identifying sustainability risks"
+        },
+        "assessmentMethodology": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 500,
+          "description": "Methodology for assessing sustainability risks"
+        },
+        "integrationInDecisionMaking": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 500,
+          "description": "How sustainability risks are integrated in investment decisions"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "fundProfile": {
+            "properties": {
+              "targetArticleClassification": {
+                "enum": ["Article8", "Article9"]
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": ["taxonomyAlignment"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "fundProfile": {
+            "properties": {
+              "targetArticleClassification": {
+                "const": "Article9"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "required": ["sustainableInvestment"],
+        "properties": {
+          "sustainableInvestment": {
+            "properties": {
+              "sustainableInvestmentMinimum": {
+                "minimum": 80
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

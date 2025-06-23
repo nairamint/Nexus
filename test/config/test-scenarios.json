@@ -1,0 +1,153 @@
+{
+  "testSuites": {
+    "schemaValidation": {
+      "description": "JSON Schema validation tests for SFDR classification requests",
+      "fixtures": [
+        "test/fixtures/article6-basic.json",
+        "test/fixtures/article8-esg.json",
+        "test/fixtures/article9-sustainable.json"
+      ],
+      "schema": "schemas/sfdr-classification-request.schema.json",
+      "expectedResults": {
+        "article6-basic.json": "VALID",
+        "article8-esg.json": "VALID",
+        "article9-sustainable.json": "VALID"
+      }
+    },
+    "regulatoryCompliance": {
+      "description": "SFDR regulatory compliance validation tests",
+      "testCases": [
+        {
+          "name": "Article 6 Basic Compliance",
+          "fixture": "test/fixtures/article6-basic.json",
+          "expectedClassification": "Article6",
+          "expectedValidationIssues": 0,
+          "requiredValidations": [
+            "metadata_validation",
+            "fund_profile_validation",
+            "sustainability_risk_integration"
+          ]
+        },
+        {
+          "name": "Article 8 ESG Characteristics",
+          "fixture": "test/fixtures/article8-esg.json",
+          "expectedClassification": "Article8",
+          "expectedValidationIssues": 0,
+          "requiredValidations": [
+            "metadata_validation",
+            "fund_profile_validation",
+            "article8_requirements",
+            "pai_consistency",
+            "taxonomy_alignment",
+            "sustainability_risk_integration"
+          ]
+        },
+        {
+          "name": "Article 9 Sustainable Investment",
+          "fixture": "test/fixtures/article9-sustainable.json",
+          "expectedClassification": "Article9",
+          "expectedValidationIssues": 0,
+          "requiredValidations": [
+            "metadata_validation",
+            "fund_profile_validation",
+            "article9_requirements",
+            "pai_consistency",
+            "taxonomy_alignment",
+            "sustainability_risk_integration"
+          ]
+        }
+      ]
+    },
+    "dataQuality": {
+      "description": "Data quality and format validation tests",
+      "validationRules": [
+        {
+          "field": "metadata.entityId",
+          "rule": "UUID_FORMAT",
+          "description": "Entity ID must be valid UUID v4 format"
+        },
+        {
+          "field": "fundProfile.isin",
+          "rule": "ISIN_FORMAT",
+          "description": "ISIN must follow ISO 6166 standard"
+        },
+        {
+          "field": "fundProfile.lei",
+          "rule": "LEI_FORMAT",
+          "description": "LEI must follow ISO 17442 standard"
+        },
+        {
+          "field": "fundProfile.fundName",
+          "rule": "STRING_LENGTH",
+          "parameters": { "min": 1, "max": 200 },
+          "description": "Fund name must be between 1-200 characters"
+        },
+        {
+          "field": "metadata.reportingPeriod",
+          "rule": "DATE_FORMAT",
+          "description": "Reporting period must be valid ISO date"
+        }
+      ]
+    },
+    "businessLogic": {
+      "description": "SFDR business logic validation tests",
+      "scenarios": [
+        {
+          "name": "Article 8 PAI Requirements",
+          "description": "Article 8 funds must consider PAI indicators",
+          "condition": "targetArticleClassification === 'Article8'",
+          "requirement": "esgIntegration.considersPAI === true"
+        },
+        {
+          "name": "Article 9 Sustainable Investment",
+          "description": "Article 9 funds must have sustainable investment objective",
+          "condition": "targetArticleClassification === 'Article9'",
+          "requirement": "sustainableInvestment.hasSustainableObjective === true"
+        },
+        {
+          "name": "PAI Indicator Consistency",
+          "description": "PAI indicators must be from valid enumeration",
+          "condition": "esgIntegration.considersPAI === true",
+          "requirement": "All paiIndicators must be valid PAI types"
+        },
+        {
+          "name": "Taxonomy Alignment Threshold",
+          "description": "Taxonomy alignment percentage must be realistic",
+          "condition": "taxonomyAlignment exists",
+          "requirement": "minimumAlignmentPercentage <= 100"
+        }
+      ]
+    }
+  },
+  "testConfiguration": {
+    "timeout": 30000,
+    "retries": 2,
+    "parallel": true,
+    "coverage": {
+      "threshold": 90,
+      "includeUntested": true
+    },
+    "reporting": {
+      "format": "json",
+      "outputPath": "test/reports/",
+      "includeDetails": true
+    }
+  },
+  "milestones": {
+    "phase1c": {
+      "description": "Phase 1C: Comprehensive Test Suite",
+      "criteria": {
+        "schemaValidationPass": "100% of fixtures pass schema validation",
+        "regulatoryCompliancePass": "All regulatory compliance tests pass",
+        "dataQualityPass": "All data quality validations pass",
+        "businessLogicPass": "All business logic scenarios validate correctly",
+        "testCoverage": "Minimum 90% code coverage"
+      },
+      "successThreshold": {
+        "totalTests": 100,
+        "passRate": 95,
+        "coveragePercentage": 90
+      }
+    }
+  }
+}
