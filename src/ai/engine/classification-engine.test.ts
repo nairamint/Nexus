@@ -13,7 +13,7 @@ import {
   createTestingSFDREngine,
   createSampleSFDRRequest,
   validateSFDRRequest
-} from './index.js.js';
+} from './index.js';
 import type {
   SFDRClassificationRequest,
   SFDRClassificationResponse,

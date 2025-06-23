@@ -681,13 +681,9 @@ class ClassificationAgentImpl implements SpecializedAgent {
   constructor(private config: AgentConfig) {}
   
   async execute(input: any): Promise<any> {
-    // Implementation stub
+    // Implementation stub - return direct SFDRArticleClassification
     return {
-      result: {
-        article: 'Article 8',
-        classification: 'LIGHT_GREEN_FUND',
-        confidence: 78
-      },
+      result: 'Article8', // Direct SFDRArticleClassification value
       confidence: { modelCertainty: 78 },
       executionTime: 800
     };

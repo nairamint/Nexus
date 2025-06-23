@@ -345,6 +345,74 @@ export class ClassificationMetrics implements IClassificationMetrics {
   article9Count: number = 0;
   successRate: number = 0;
   validationSuccessRate: number = 0;
+
+  /**
+   * Record a classification result
+   */
+  recordClassification(data: {
+    success: boolean;
+    confidence: number;
+    processingTime: number;
+    agentsUsed: number;
+    decisionType: string;
+  }): void {
+    this.totalClassifications++;
+    
+    if (data.success) {
+      this.successfulClassifications++;
+    }
+    
+    // Update average processing time
+    if (this.totalClassifications === 1) {
+      this.averageProcessingTime = data.processingTime;
+    } else {
+      this.averageProcessingTime = 
+        (this.averageProcessingTime * (this.totalClassifications - 1) + data.processingTime) / 
+        this.totalClassifications;
+    }
+    
+    // Update average confidence
+    if (this.totalClassifications === 1) {
+      this.averageConfidence = data.confidence;
+    } else {
+      this.averageConfidence = 
+        (this.averageConfidence * (this.totalClassifications - 1) + data.confidence) / 
+        this.totalClassifications;
+    }
+    
+    // Update success rate
+    this.successRate = this.successfulClassifications / this.totalClassifications;
+  }
+
+  /**
+   * Record an error
+   */
+  recordError(error: any): void {
+    this.errorCount++;
+  }
+
+  /**
+   * Get a snapshot of current metrics
+   */
+  getSnapshot(): ClassificationMetrics {
+    const snapshot = new ClassificationMetrics();
+    Object.assign(snapshot, this);
+    return snapshot;
+  }
+
+  /**
+   * Get health metrics
+   */
+  getHealthMetrics(): any {
+    return {
+      successRate: this.totalClassifications > 0 ? this.successfulClassifications / this.totalClassifications : 0,
+      averageProcessingTime: this.averageProcessingTime,
+      errorRate: this.totalClassifications > 0 ? this.errorCount / this.totalClassifications : 0,
+      totalClassifications: this.totalClassifications,
+      successfulClassifications: this.successfulClassifications,
+      averageConfidence: this.averageConfidence
+    };
+  }
 }
 
 /**

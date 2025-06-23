@@ -204,7 +204,7 @@ export class SFDRClassificationEngine {
    * Get classification metrics and performance data
    */
   public getMetrics(): ClassificationMetrics {
-    return this.metrics.getSnapshot();
+    return this.metrics;
   }
 
   /**
@@ -272,14 +272,14 @@ export class SFDRClassificationEngine {
 
     try {
       // Use existing validator for schema validation
-      const schemaValidation = await this.validator.validateClassificationRequest(request);
+      const schemaValidation = await this.validator.validateRequest(request);
       
       if (!schemaValidation.isValid) {
         return {
           isValid: false,
-          errors: schemaValidation.errors.map(error => ({
-            field: error.path,
-            message: error.message,
+          errors: schemaValidation.issues.map(issue => ({
+            field: issue.code,
+            message: issue.message,
             code: 'SCHEMA_VALIDATION_ERROR'
           }))
         };
@@ -410,10 +410,14 @@ export class SFDRClassificationEngine {
     confidence: any,
     request: SFDRClassificationRequest
   ): Promise<RegulatoryRiskAssessment> {
+    // Get validation result from the validator
+    const validationResult = await this.validator.validateRequest(request);
+    
     return this.confidenceFramework.assessRegulatoryRisk(
+      request,
       classification,
-      confidence.overallConfidence,
-      this.buildClassificationContext(request)
+      confidence,
+      validationResult
     );
   }
 
@@ -599,11 +603,23 @@ export class SFDRClassificationEngine {
   }
 
   private updateMetrics(orchestrationResult: any, confidenceDecision: any): void {
+    // Calculate processing time safely
+    let processingTime = 0;
+    if (orchestrationResult.endTime && orchestrationResult.startTime) {
+      processingTime = orchestrationResult.endTime.getTime() - orchestrationResult.startTime.getTime();
+    }
+    
+    // Get confidence safely
+    const confidence = orchestrationResult.confidence?.overallConfidence || 0;
+    
+    // Get agents used safely
+    const agentsUsed = orchestrationResult.agentContributions?.length || 0;
+    
     this.metrics.recordClassification({
       success: true,
-      confidence: orchestrationResult.confidence.overallConfidence,
-      processingTime: orchestrationResult.endTime.getTime() - orchestrationResult.startTime.getTime(),
-      agentsUsed: orchestrationResult.agentContributions.length,
+      confidence,
+      processingTime,
+      agentsUsed,
       decisionType: confidenceDecision.decisionType
     });
   }
@@ -667,42 +683,10 @@ export class SFDRClassificationEngine {
 }
 
 // ============================================================================
-// METRICS CLASS
+// END OF CLASS
 // ============================================================================
 
-export class ClassificationMetrics {
-  private metrics: any = {
-    totalClassifications: 0,
-    successfulClassifications: 0,
-    averageProcessingTime: 0,
-    averageConfidence: 0,
-    errorCount: 0
-  };
-
-  recordClassification(data: any): void {
-    this.metrics.totalClassifications++;
-    if (data.success) {
-      this.metrics.successfulClassifications++;
-    }
-    // Update other metrics...
-  }
-
-  recordError(error: any): void {
-    this.metrics.errorCount++;
-  }
-
-  getSnapshot(): ClassificationMetrics {
-    return { ...this.metrics };
-  }
-
-  getHealthMetrics(): any {
-    return {
-      successRate: this.metrics.successfulClassifications / this.metrics.totalClassifications,
-      averageProcessingTime: this.metrics.averageProcessingTime,
-      errorRate: this.metrics.errorCount / this.metrics.totalClassifications
-    };
-  }
-}
+// Remove duplicate methods - they are now properly implemented in ClassificationMetrics class
 
 // ============================================================================
 // SUPPORTING TYPES

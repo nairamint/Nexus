@@ -9,7 +9,8 @@
 // MAIN ENGINE EXPORTS
 // ============================================================================
 
-export { SFDRClassificationEngine, ClassificationMetrics } from './classification-engine.js';
+export { SFDRClassificationEngine } from './classification-engine.js';
+export { ClassificationMetrics } from './types.js';
 export type {
   ValidationError,
   ComponentHealth,
@@ -111,7 +112,7 @@ export type {
 // ============================================================================
 
 // Import SFDRClassificationEngine directly to use in factory functions
-import { SFDRClassificationEngine } from './classification-engine.js.js';
+import { SFDRClassificationEngine } from './classification-engine.js';
 
 /**
  * Create a new SFDR Classification Engine with default configuration
@@ -297,6 +298,7 @@ export async function validateSFDRRequest(
 export function createSampleSFDRRequest(): SFDRClassificationRequest {
   return {
     metadata: {
+      entityId: '550e8400-e29b-41d4-a716-446655440000',
       source: 'test',
       version: '2.0.0',
       priority: 'NORMAL'
@@ -315,7 +317,21 @@ export function createSampleSFDRRequest(): SFDRClassificationRequest {
       esgCriteria: ['Environmental', 'Social', 'Governance'],
       sustainabilityRiskIntegration: true,
       paiConsideration: true,
-      paiIndicators: ['GHG_EMISSIONS', 'CARBON_FOOTPRINT']
+      paiIndicators: ['GHG_EMISSIONS', 'CARBON_FOOTPRINT'],
+      dueDiligencePolicies: {
+        esgIntegration: true,
+        sustainabilityRisks: true,
+        adverseImpacts: true
+      },
+      engagementPolicies: {
+        shareholderEngagement: true,
+        votingPolicy: true
+      }
+    },
+    sustainabilityRiskIntegration: {
+      identificationProcess: 'Systematic identification of sustainability risks through ESG data analysis and third-party research',
+      assessmentMethodology: 'Quantitative and qualitative assessment using proprietary ESG scoring models and scenario analysis',
+      integrationInDecisionMaking: 'Integration of sustainability risk assessment into investment committee decisions and portfolio construction'
     },
     sustainabilityObjectives: {
       hasEnvironmentalObjectives: true,

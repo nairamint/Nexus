@@ -53,6 +53,7 @@ function createDemoScenarios(): Record<string, SFDRClassificationRequest> {
         investmentStrategy: 'Broad market exposure with minimal ESG considerations'
       },
       esgIntegration: {
+        ...baseRequest.esgIntegration,
         integrationLevel: 'MINIMAL',
         sustainabilityRiskIntegration: true,
         paiConsideration: false,
@@ -73,6 +74,7 @@ function createDemoScenarios(): Record<string, SFDRClassificationRequest> {
         investmentStrategy: 'Growth investing with environmental and social characteristics'
       },
       esgIntegration: {
+        ...baseRequest.esgIntegration,
         integrationLevel: 'COMPREHENSIVE',
         esgCriteria: ['Environmental', 'Social'],
         sustainabilityRiskIntegration: true,
@@ -100,6 +102,7 @@ function createDemoScenarios(): Record<string, SFDRClassificationRequest> {
         investmentStrategy: 'Dedicated sustainable investment with measurable environmental impact'
       },
       esgIntegration: {
+        ...baseRequest.esgIntegration,
         integrationLevel: 'COMPREHENSIVE',
         esgCriteria: ['Environmental', 'Social', 'Governance'],
         sustainabilityRiskIntegration: true,
@@ -155,6 +158,7 @@ function createDemoScenarios(): Record<string, SFDRClassificationRequest> {
         investmentStrategy: 'Mixed approach with some ESG elements but no clear sustainability focus'
       },
       esgIntegration: {
+        ...baseRequest.esgIntegration,
         integrationLevel: 'PARTIAL',
         esgCriteria: ['Governance'],
         sustainabilityRiskIntegration: true,
@@ -340,30 +344,29 @@ async function runHealthCheckDemo(): Promise<void> {
 /**
  * Display engine metrics
  */
-function displayEngineMetrics(): void {
+function displayEngineMetrics(engine: any): void {
   console.log('\n' + '='.repeat(80));
   console.log('📊 Engine Metrics Summary');
   console.log('='.repeat(80));
   
-  const engine = createDevelopmentSFDREngine();
   const metrics = engine.getMetrics();
   
   console.log(`\n📈 Performance Metrics:`);
-  console.log(`   Total Classifications: ${metrics.totalClassifications}`);
-  console.log(`   Successful Classifications: ${metrics.successfulClassifications}`);
-  console.log(`   Error Count: ${metrics.errorCount}`);
-  console.log(`   Average Processing Time: ${metrics.averageProcessingTime.toFixed(2)}ms`);
+  console.log(`   Total Classifications: ${metrics.totalClassifications || 0}`);
+  console.log(`   Successful Classifications: ${metrics.successfulClassifications || 0}`);
+  console.log(`   Error Count: ${metrics.errorCount || 0}`);
+  console.log(`   Average Processing Time: ${(metrics.averageProcessingTime || 0).toFixed(2)}ms`);
   
   console.log(`\n🎯 Quality Metrics:`);
-  console.log(`   Average Confidence: ${(metrics.averageConfidence * 100).toFixed(2)}%`);
-  console.log(`   Success Rate: ${(metrics.successRate * 100).toFixed(2)}%`);
-  console.log(`   Validation Success Rate: ${(metrics.validationSuccessRate * 100).toFixed(2)}%`);
+  console.log(`   Average Confidence: ${((metrics.averageConfidence || 0) * 100).toFixed(2)}%`);
+  console.log(`   Success Rate: ${((metrics.successRate || 0) * 100).toFixed(2)}%`);
+  console.log(`   Validation Success Rate: ${((metrics.validationSuccessRate || 0) * 100).toFixed(2)}%`);
   
   console.log(`\n💼 Business Metrics:`);
-  console.log(`   Article 6 Classifications: ${metrics.article6Count}`);
-  console.log(`   Article 8 Classifications: ${metrics.article8Count}`);
-  console.log(`   Article 9 Classifications: ${metrics.article9Count}`);
-  console.log(`   Human Review Rate: ${(metrics.humanReviewRate * 100).toFixed(2)}%`);
+  console.log(`   Article 6 Classifications: ${metrics.article6Count || 0}`);
+  console.log(`   Article 8 Classifications: ${metrics.article8Count || 0}`);
+  console.log(`   Article 9 Classifications: ${metrics.article9Count || 0}`);
+  console.log(`   Human Review Rate: ${((metrics.humanReviewRate || 0) * 100).toFixed(2)}%`);
 }
 
 // ============================================================================
@@ -384,9 +387,13 @@ async function runDemo(): Promise<void> {
     
     // Demonstrate classification for each scenario
     if (DEMO_CONFIG.demonstrateAllArticles) {
+      console.log(`\n🔍 Starting classification of ${Object.keys(scenarios).length} scenarios...`);
       for (const [scenarioName, request] of Object.entries(scenarios)) {
         try {
+          console.log(`\n📋 Classifying scenario: ${scenarioName}`);
           const response = await engine.classify(request);
+          console.log(`✅ Classification completed for ${scenarioName}`);
+          console.log(`🔍 Debug - Full result:`, JSON.stringify(response, null, 2));
           displayClassificationResults(
             scenarioName, 
             request, 
@@ -397,6 +404,7 @@ async function runDemo(): Promise<void> {
           console.error(`❌ Error classifying ${scenarioName}:`, error);
         }
       }
+      console.log(`\n✅ All classifications completed`);
     }
     
     // Demonstrate batch processing
@@ -459,7 +467,7 @@ async function runDemo(): Promise<void> {
     }
     
     // Display engine metrics
-    displayEngineMetrics();
+    displayEngineMetrics(engine);
     
     console.log('\n' + '='.repeat(80));
     console.log('✅ Demo completed successfully!');
