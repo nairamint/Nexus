@@ -32,7 +32,7 @@
     "demo:phase2b": "ts-node src/examples/phase2b-example.ts",
     "benchmark:phase2b": "jest tests/phase2b.test.ts --testNamePattern='Performance Benchmarks'",
     "ci:validate": "npm run lint && npm run format:check && npm run test:regulatory && npm run validate:schema",
-    "prepare": "husky install"
+    "prepare": "[ \"$HUSKY\" = 1 ] && husky install || echo 'Skipping husky in CI'"
   },
   "keywords": [
     "sfdr",
@@ -98,7 +98,9 @@
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.0",
-    "husky": "^8.0.3",
+    "husky": {
+      "skipCI": true
+    },
     "jest": "^29.7.0",
     "json-schema-to-typescript": "^13.1.1",
     "lint-staged": "^14.0.0",
